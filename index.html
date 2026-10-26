@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquid Glass</title>
+<style>
+  :root {
+    --bg1: #0b1220; --bg2: #1e293b;
+    --accent: #7dd3fc; --accent2: #a78bfa; --accent3: #34d399;
+    --glass: rgba(255,255,255,0.09);
+    --glass-border: rgba(255,255,255,0.2);
+    --text: #f1f5f9; --muted: #94a3b8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--text);
+    background: radial-gradient(1200px 800px at 15% 5%, #1e40af 0%, transparent 55%),
+                radial-gradient(900px 600px at 85% 95%, #7c3aed 0%, transparent 55%),
+                linear-gradient(135deg, var(--bg1), var(--bg2));
+    background-attachment: fixed; min-height: 100vh; overflow-x: hidden; }
+  .blob { position: fixed; border-radius: 50%; filter: blur(70px); opacity: .45; z-index: 0; animation: float 20s ease-in-out infinite; }
+  .blob.b1 { width: 360px; height: 360px; background: #38bdf8; top: 2%; left: 5%; }
+  .blob.b2 { width: 300px; height: 300px; background: #a78bfa; bottom: 8%; right: 6%; animation-delay: -7s; }
+  .blob.b3 { width: 260px; height: 260px; background: #34d399; top: 45%; left: 48%; animation-delay: -13s; }
+  .blob.b4 { width: 200px; height: 200px; background: #f472b6; top: 70%; left: 15%; animation-delay: -4s; }
+  @keyframes float { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(50px,-40px) scale(1.08)} 66%{transform:translate(-40px,50px) scale(.92)} }
+  .wrap { position: relative; z-index: 1; max-width: 1140px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.5rem; gap: 1rem; flex-wrap: wrap; }
+  .logo { font-weight: 800; font-size: 1.3rem; letter-spacing: -0.02em; }
+  .logo span { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  nav { display: flex; gap: .25rem; flex-wrap: wrap; }
+  nav a { color: var(--muted); text-decoration: none; padding: .5rem .9rem; border-radius: 999px; font-size: .9rem; transition: .2s; }
+  nav a:hover, nav a.active { color: var(--text); background: var(--glass); }
+  .hero { text-align: center; padding: 2.5rem 1rem 2rem; }
+  .hero h1 { font-size: clamp(2.4rem, 7vw, 4.6rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
+  .hero h1 .grad { background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { color: var(--muted); max-width: 640px; margin: 1.2rem auto 2rem; font-size: 1.15rem; line-height: 1.6; }
+  .hero-actions { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: .5rem; padding: .9rem 1.7rem; border-radius: 999px; text-decoration: none; font-weight: 600; font-size: .95rem; border: none; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+  .btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #0f172a; box-shadow: 0 12px 34px rgba(125,211,252,.35); }
+  .btn.ghost { background: var(--glass); color: var(--text); border: 1px solid var(--glass-border); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .btn:hover { transform: translateY(-3px); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.25rem; margin-top: 2.5rem; }
+  .card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 22px; padding: 1.6rem; backdrop-filter: blur(20px) saturate(150%); -webkit-backdrop-filter: blur(20px) saturate(150%); box-shadow: 0 10px 36px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.14); transition: transform .28s, box-shadow .28s; }
+  .card:hover { transform: translateY(-6px) rotate(-.3deg); box-shadow: 0 20px 48px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.18); }
+  .card .icon { width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; font-size: 1.5rem; background: linear-gradient(135deg, rgba(125,211,252,.3), rgba(167,139,250,.3)); margin-bottom: 1.1rem; box-shadow: inset 0 1px 0 rgba(255,255,255,.2); }
+  .card h3 { font-size: 1.2rem; margin-bottom: .5rem; }
+  .card p { color: var(--muted); font-size: .95rem; line-height: 1.55; }
+  .panel { margin-top: 3rem; padding: 2rem; border-radius: 26px; background: var(--glass); border: 1px solid var(--glass-border); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); box-shadow: 0 10px 36px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.14); }
+  .panel h2 { font-size: 1.6rem; margin-bottom: .6rem; }
+  .panel p { color: var(--muted); line-height: 1.6; }
+  .chips { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.25rem; }
+  .chip { padding: .45rem 1rem; border-radius: 999px; background: rgba(255,255,255,.07); border: 1px solid var(--glass-border); font-size: .85rem; color: var(--muted); transition: .2s; cursor: default; }
+  .chip:hover { color: var(--text); background: rgba(255,255,255,.12); }
+  .tabs { display: flex; gap: .5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+  .tab { padding: .6rem 1.2rem; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--muted); cursor: pointer; font-size: .9rem; transition: .2s; }
+  .tab.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #0f172a; font-weight: 600; }
+  .tab-content { margin-top: 1.25rem; color: var(--muted); line-height: 1.7; min-height: 60px; }
+  .form { display: grid; gap: .9rem; margin-top: 1.25rem; max-width: 480px; }
+  .form input, .form textarea { padding: .85rem 1.1rem; border-radius: 14px; border: 1px solid var(--glass-border); background: rgba(255,255,255,.06); color: var(--text); font: inherit; backdrop-filter: blur(8px); }
+  .form input:focus, .form textarea:focus { outline: none; border-color: var(--accent); }
+  .form button { justify-self: start; }
+  .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--glass); border: 1px solid var(--glass-border); backdrop-filter: blur(16px); padding: .8rem 1.4rem; border-radius: 999px; transition: transform .3s; z-index: 10; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(6px); display: none; place-items: center; z-index: 20; }
+  .modal-backdrop.open { display: grid; }
+  .modal { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2rem; max-width: 420px; width: 90%; backdrop-filter: blur(24px); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  .modal h3 { margin-bottom: .75rem; }
+  .modal p { color: var(--muted); margin-bottom: 1.25rem; }
+  .modal .btn { margin-right: .5rem; }
+  .counter { display: flex; align-items: center; gap: 1rem; margin-top: 1.25rem; }
+  .counter button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--glass-border); background: var(--glass); color: var(--text); font-size: 1.3rem; cursor: pointer; backdrop-filter: blur(8px); }
+  .counter span { font-size: 2rem; font-weight: 700; min-width: 3ch; text-align: center; }
+  footer { text-align: center; color: var(--muted); font-size: .85rem; margin-top: 4rem; }
+  @media (max-width: 600px) { nav { display: none; } }
+</style>
+</head>
+<body>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="blob b4"></div>
+  <div class="wrap">
+    <header>
+      <div class="logo">Liquid<span>Glass</span></div>
+      <nav id="nav">
+        <a href="#features">Features</a>
+        <a href="#interactive">Interactive</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="btn ghost" id="menuBtn" style="padding:.5rem .9rem;">☰</button>
+    </header>
+    <section class="hero">
+      <h1>Design that <span class="grad">flows</span> like glass</h1>
+      <p>A modern, frosted-glass interface with translucent layers, soft blurs, gentle motion, and fully working interactions.</p>
+      <div class="hero-actions">
+        <button class="btn primary" id="openModal">Get started</button>
+        <a href="#features" class="btn ghost">Explore</a>
+      </div>
+    </section>
+    <section id="features" class="grid">
+      <div class="card"><div class="icon">✨</div><h3>Frosted Layers</h3><p>Translucent panels with backdrop blur create depth without heavy shadows.</p></div>
+      <div class="card"><div class="icon">🎨</div><h3>Soft Gradients</h3><p>Subtle color washes and animated blobs give the page life and warmth.</p></div>
+      <div class="card"><div class="icon">📱</div><h3>Responsive</h3><p>Fluid grid and typography that adapt cleanly from phone to desktop.</p></div>
+      <div class="card"><div class="icon">⚡</div><h3>Lightweight</h3><p>Pure HTML/CSS/JS — no frameworks, no build step, instant load.</p></div>
+    </section>
+
+    <section id="interactive" class="panel">
+      <h2>Interactive demo</h2>
+      <p>Try the live controls below.</p>
+      <div class="tabs">
+        <button class="tab active" data-tab="counter">Counter</button>
+        <button class="tab" data-tab="colors">Colors</button>
+        <button class="tab" data-tab="info">Info</button>
+      </div>
+      <div class="tab-content" id="tabContent">Click + or − to change the value.</div>
+      <div id="counterView" style="display:none;">
+        <div class="counter">
+          <button id="dec">−</button>
+          <span id="count">0</span>
+          <button id="inc">+</button>
+        </div>
+      </div>
+      <div id="colorsView" style="display:none;">
+        <div class="chips" id="colorChips"></div>
+      </div>
+    </section>
+
+    <section id="contact" class="panel">
+      <h2>Get in touch</h2>
+      <p>Send a message — it's stored locally and shown below.</p>
+      <form class="form" id="contactForm">
+        <input type="text" id="name" placeholder="Your name" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <textarea id="msg" rows="4" placeholder="Message" required></textarea>
+        <button type="submit" class="btn primary">Send</button>
+      </form>
+      <div id="messages" style="margin-top:1.5rem;"></div>
+    </section>
+    <footer>© 2026 Liquid Glass · Built with care</footer>
+  </div>
+
+  <div class="modal-backdrop" id="modal">
+    <div class="modal">
+      <h3>Welcome to Liquid Glass</h3>
+      <p>This is a fully functional demo: tabs, counter, color chips, contact form, and modal — all in pure HTML/CSS/JS.</p>
+      <button class="btn primary" id="closeModal">Got it</button>
+    </div>
+  </div>
+  <div class="toast" id="toast">Saved</div>
+
+<script>
+  // nav active on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
+    navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+  });
+
+  // mobile menu toggle (simple)
+  const menuBtn = document.getElementById('menuBtn');
+  const nav = document.getElementById('nav');
+  menuBtn.addEventListener('click', () => { nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex'; });
+
+  // modal
+  const modal = document.getElementById('modal');
+  document.getElementById('openModal').addEventListener('click', () => modal.classList.add('open'));
+  document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+
+  // tabs
+  const tabs = document.querySelectorAll('.tab');
+  const tabContent = document.getElementById('tabContent');
+  const counterView = document.getElementById('counterView');
+  const colorsView = document.getElementById('colorsView');
+  const views = { counter: counterView, colors: colorsView };
+  const texts = {
+    counter: 'Click + or − to change the value.',
+    colors: 'Pick a color chip to set the accent.',
+    info: 'Liquid Glass demo — all controls are live and stored locally.'
+  };
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    const key = t.dataset.tab;
+    Object.values(views).forEach(v => v.style.display = 'none');
+    if (views[key]) views[key].style.display = 'block';
+    tabContent.textContent = texts[key];
+  }));
+
+  // counter
+  let count = 0;
+  const countEl = document.getElementById('count');
+  document.getElementById('inc').addEventListener('click', () => { count++; countEl.textContent = count; });
+  document.getElementById('dec').addEventListener('click', () => { count--; countEl.textContent = count; });
+
+  // color chips
+  const colors = ['#7dd3fc','#a78bfa','#34d399','#f472b6','#fbbf24','#fb7185'];
+  const colorChips = document.getElementById('colorChips');
+  colors.forEach(c => {
+    const ch = document.createElement('span');
+    ch.className = 'chip';
+    ch.style.background = c + '33';
+    ch.style.borderColor = c;
+    ch.textContent = c;
+    ch.addEventListener('click', () => {
+      document.documentElement.style.setProperty('--accent', c);
+      showToast('Accent set to ' + c);
+    });
+    colorChips.appendChild(ch);
+  });
+
+  // contact form
+  const form = document.getElementById('contactForm');
+  const messages = document.getElementById('messages');
+  const toast = document.getElementById('toast');
+  function showToast(t){ toast.textContent = t; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 1800); }
+  function renderMessages() {
+    const list = JSON.parse(localStorage.getItem('lg_msgs') || '[]');
+    messages.innerHTML = list.length ? '<div class="chips">' + list.map(m => '<span class="chip">' + m.name + ': ' + m.msg + '</span>').join('') + '</div>' : '';
+  }
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const m = { name: document.getElementById('name').value, email: document.getElementById('email').value, msg: document.getElementById('msg').value };
+    const list = JSON.parse(localStorage.getItem('lg_msgs') || '[]');
+    list.push(m); localStorage.setItem('lg_msgs', JSON.stringify(list));
+    form.reset(); renderMessages(); showToast('Message saved');
+  });
+  renderMessages();
+</script>
+</body>
+</html>
